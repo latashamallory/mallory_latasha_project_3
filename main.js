@@ -150,6 +150,39 @@ window.addEventListener("DOMContentLoaded", function()); {
 	function editItem(){
 		//grab data from  item in local storage
 		var value = localStorage.getItem(this.key);
+		var item = JSON.parse(value);
+		
+		//shows the form
+		toggleControls("off");
+		
+		//populate form fields$('option').value = item.option[1]
+		$('option').value = item.option[1];
+		$('aname').value = item.option[1];
+		$('alname').value = item.option[1];
+		$('sname').value = item.option[1];
+		var radios = document.forms[0].favorite;
+		for(var i=0; i<radios.length; i++){
+			if(radios[i].value == "Yes" && item.favorite[0] == "Yes"){
+				radios[i].setAttribute("checked", "checked");
+			}else if(radios[i].value == "No" && item.favorite[1] == "No"){
+				radios[i].setAttribute("checked", "checked");
+			}
+		}
+		if(item.favorite[1] == "Yes"){
+			$('fav').setAttribute("checked", "checked");
+		}
+		$('iq').value = item.iq[1];
+		$('date').value = item.date[1];
+		$('notes').value = item.notes[1];
+		
+		//remove initial listener from 'save song' button
+		save.removeEventListener("click", storeData);
+		//change submit button to say edit button$('submit').value = "Edit Song";
+		var editSubmit = $('submit');
+		//save key value in this function
+		//use that value when saving edited data
+		editSubmit.addEventListener("click", validate);
+		editSubmit.key = this.key;
 	}
 	
 	function clearLocal() {
@@ -163,6 +196,29 @@ window.addEventListener("DOMContentLoaded", function()); {
 		}
 	}
 	
+	function validate(){
+		//define elements to checked
+		var getOption = $('option');
+		var getAname = $('aname');
+		var getAlname = $('alname');
+		var getSname = $('sname');
+		
+		//get error messages
+		var messageAry = [];
+		//option validation
+		if(getOption.value=="--Option--"){
+			var optionError = "Please choose a playlist.";
+			getOption.style.border = "1px solid blue";
+			messageAry.push(optionError);
+		}
+		//artist name validation
+		if(getAname.value === ""){
+			var aNameError = "Please enter an artist name.";
+			getAname.style.border = 1px solid blue;
+			messageAry.push(aNameError);
+		}
+	}
+	
 	//Variable defaults
 	makeCats();
 	
@@ -172,4 +228,7 @@ window.addEventListener("DOMContentLoaded", function()); {
 	var clearLink = $('clear');
 	clearLink.addEventListener("click", clearLocal);
 	var save = $('save song');
-	save.addEventListener("click", storeData);
+	save.addEventListener("click", validate);
+	
+	
+	
